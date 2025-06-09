@@ -1,1333 +1,489 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Notas PAU/EBAU/EvAU (España)</title>
-    <meta name="description" content="Calcula tu nota de acceso a la universidad en España (PAU, EBAU, EvAU) de forma sencilla y precisa.">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <title>HTML Editor</title>
     <style>
         :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #3b82f6;
-            --secondary-color: #64748b;
-            --success-color: #059669;
-            --warning-color: #d97706;
-            --danger-color: #dc2626;
-            --info-color: #0891b2;
-            --light-bg: #f8fafc;
-            --card-bg: #ffffff;
-            --dark-bg: #0f172a;
-            --dark-card-bg: #1e293b;
-            --text-color: #1e293b;
-            --text-secondary: #64748b;
-            --light-text-color: #f1f5f9;
-            --border-color: #e2e8f0;
-            --border-dark: #334155;
-            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --border-radius: 0.5rem;
-            --border-radius-lg: 0.75rem;
-            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --background-color: #ffffff;
+            --text-color: #000000;
+            --editor-bg: #f8f9fa;
+            --preview-bg: #ffffff;
+            --border-color: #dee2e6;
+            --button-bg: #e9ecef;
+            --button-hover-bg: #ced4da;
+            --tab-bg: #f1f3f5;
+            --tab-active-bg: #ffffff;
+            --tab-close-color: #adb5bd;
+            --tab-close-hover-bg: #e9ecef;
         }
 
-        * {
-            box-sizing: border-box;
+        [data-theme="dark"] {
+            --background-color: #212529;
+            --text-color: #ffffff;
+            --editor-bg: #343a40;
+            --preview-bg: #2b2b2b;
+            --border-color: #495057;
+            --button-bg: #495057;
+            --button-hover-bg: #6c757d;
+            --tab-bg: #343a40;
+            --tab-active-bg: #212529;
+            --tab-close-color: #adb5bd;
+            --tab-close-hover-bg: #495057;
         }
 
-        body {
-            font-family: var(--font-family);
-            line-height: 1.6;
+        body, html {
             margin: 0;
             padding: 0;
-            background-color: var(--light-bg);
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
             color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Modo Oscuro */
-        body.dark-mode {
-            background-color: var(--dark-bg);
-            color: var(--light-text-color);
-        }
-        body.dark-mode .card {
-            background-color: var(--dark-card-bg);
-            border-color: var(--border-dark);
-        }
-        body.dark-mode .form-group input,
-        body.dark-mode .form-group select {
-            background-color: #334155;
-            border-color: var(--border-dark);
-            color: var(--light-text-color);
-        }
-        body.dark-mode .form-group input:focus,
-        body.dark-mode .form-group select:focus {
-            border-color: var(--primary-light);
-        }
-        body.dark-mode .card-header {
-            background-color: #334155;
-            border-color: var(--border-dark);
-        }
-        body.dark-mode .message {
-            background-color: #334155;
-            border-color: var(--border-dark);
-            color: var(--light-text-color);
-        }
-        /* IMPROVED DARK MODE COLORS */
-        body.dark-mode .result-item {
-            background-color: #28374a; /* Slightly lighter than card bg for distinction */
-            border-left-color: #4a5d73; /* Coordinated border color */
-        }
-        body.dark-mode .collapsible-content code {
-            background-color: #2d3b4f; /* Darker code background */
-            color: var(--light-text-color);
-        }
-        body.dark-mode .message.info {
-            background-color: #075985; /* Deeper blue for info */
-            border-color: #0284c7;
-            color: #e0f2fe;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-        }
-        header h1 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.75rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-        header p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        @media (min-width: 768px) {
-            header h1 {
-                font-size: 2.25rem;
-            }
-            header p {
-                font-size: 1rem;
-            }
+            overflow: hidden;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            flex-grow: 1;
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
-        @media (min-width: 1024px) {
-            .container {
-                grid-template-columns: 2fr 1fr;
-                gap: 3rem;
-            }
-        }
-
-        .calculator-container {
-            grid-column: 1 / -1;
-        }
-
-        @media (min-width: 1024px) {
-            .calculator-container {
-                grid-column: span 1;
-            }
-        }
-
-        .results-container, .info-container {
-            grid-column: 1 / -1;
-        }
-
-        @media (min-width: 1024px) {
-            .results-container {
-                grid-column: 2 / 3;
-                grid-row: 1 / 2;
-            }
-            .info-container {
-                grid-column: 1 / -1;
-            }
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.25rem 1.5rem;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .card-content {
-            padding: 1.5rem;
-        }
-
-        .section-divider {
-            border: none;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
-            margin: 2rem 0;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
+        .toolbar {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            font-weight: 500;
-            color: var(--text-color);
-            font-size: 0.875rem;
-        }
-
-        .form-group input[type="number"],
-        .form-group select {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
-            transition: var(--transition);
-            background-color: var(--card-bg);
-        }
-
-        .form-group input[type="number"]:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
-        }
-
-        .form-group input[type="number"]::-webkit-outer-spin-button,
-        .form-group input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .form-group input[type="number"] {
-            -moz-appearance: textfield;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column; /* Default to column on small screens */
-            gap: 0.75rem;
-        }
-
-        @media (min-width: 640px) {
-            .input-group {
-                flex-direction: row; /* Row on larger screens */
-                align-items: center;
-            }
-            .input-group input[type="number"] {
-                flex: 1;
-            }
-        }
-
-        .ponderacion-select {
-            width: auto !important;
-            min-width: 80px;
-        }
-
-        .ponderacion-select:disabled {
-            background-color: #f1f5f9;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        body.dark-mode .ponderacion-select:disabled {
-            background-color: #2d3748; /* Darker background for disabled in dark mode */
-        }
-
-
-        .btn {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 0.875rem 1.5rem;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            width: 100%;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-            margin-top: 1.5rem; /* Added margin-top for spacing */
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgb(37 99 235 / 0.3);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            background: var(--secondary-color);
-            cursor: not-allowed;
-            opacity: 0.7;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #475569 100%);
-            margin-top: 0.75rem;
-        }
-
-        .btn-secondary:hover {
-            box-shadow: 0 4px 12px rgb(100 116 139 / 0.3);
-        }
-
-        .results {
-            padding: 0;
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background-color: #f8fafc;
-            border-radius: var(--border-radius);
-            border-left: 4px solid var(--border-color);
-        }
-        /* ORIGINAL DARK MODE RESULT ITEM (BEFORE IMPROVEMENT) */
-        /* body.dark-mode .result-item {
-            background-color: #2d3748;
-            border-left-color: var(--border-dark);
-        } */
-
-
-        .result-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .result-item strong {
-            font-weight: 600;
-            /* NEW: Make all results text smaller by default */
-            font-size: 0.95rem; 
-        }
-
-        .result-value span {
-            font-weight: 700;
-            /* NEW: Make all result values smaller by default */
-            font-size: 1.05rem; 
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        /* NEW: Enlarge only the final admission note */
-        #notaAdmisionResult {
-            font-size: 1.6rem !important; /* Important to override smaller font-size */
-            padding: 0.35rem 1rem !important;
-        }
-        #notaAdmisionResult + span { /* If there was a sibling text, this would target it */
-            font-size: inherit; /* Ensure consistency if any */
-        }
-
-
-        .result-value.note-fail span {
-            background-color: var(--danger-color);
-        }
-        .result-value.note-pass span {
-            background-color: var(--success-color);
-        }
-        .result-value.note-intermediate span {
-            background-color: var(--warning-color);
-        }
-        .result-value.note-excellent span {
-            background-color: var(--success-color);
-        }
-
-        .message {
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-
-        .message.info {
-            background-color: #ecfeff;
-            border: 1px solid #a5f3fc;
-            color: #0e7490;
-        }
-
-        .message.warning {
-            background-color: #fef3c7;
-            border: 1px solid #fcd34d;
-            color: #92400e;
-        }
-
-        .message.error {
-            background-color: #fee2e2;
-            border: 1px solid #fca5a5;
-            color: #991b1b;
-        }
-
-        .message.success {
-            background-color: #d1fae5;
-            border: 1px solid #86efac;
-            color: #065f46;
-        }
-        /* Dark mode for messages */
-        /* ORIGINAL DARK MODE INFO MESSAGE (BEFORE IMPROVEMENT) */
-        /* body.dark-mode .message.info {
-            background-color: #075985;
-            border-color: #0284c7;
-            color: #e0f2fe;
-        } */
-
-        body.dark-mode .message.warning {
-            background-color: #92400e;
-            border-color: #d97706;
-            color: #fef3c7;
-        }
-
-        body.dark-mode .message.error {
-            background-color: #991b1b;
-            border-color: #dc2626;
-            color: #fee2e2;
-        }
-
-        body.dark-mode .message.success {
-            background-color: #065f46;
-            border-color: #059669;
-            color: #d1fae5;
-        }
-
-
-        .additional-materias-group {
-            border: 2px dashed var(--border-color);
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            border-radius: var(--border-radius-lg);
-            background-color: #fafafa;
-        }
-        body.dark-mode .additional-materias-group {
-            background-color: #1a2432;
-            border-color: #334155;
-        }
-
-        .examples {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            opacity: 0.7;
-            font-style: italic;
-            margin-top: 0.25rem;
-        }
-        body.dark-mode .examples {
-            color: #94a3b8;
-        }
-
-        .dark-mode-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            font-size: 1.25rem;
-            cursor: pointer;
-            color: white;
-            transition: var(--transition);
             padding: 0.5rem;
-            border-radius: 50%;
-            width: 3rem;
-            height: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: var(--editor-bg);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
         }
 
-        .dark-mode-toggle:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        .collapsible-header {
-            cursor: pointer;
-            padding: 1.25rem 1.5rem;
-            margin: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            transition: var(--transition);
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            border-bottom: 1px solid var(--border-color); /* Added border bottom */
-        }
-        body.dark-mode .collapsible-header {
-            background: linear-gradient(135deg, #334155 0%, #475569 100%);
-            border-color: var(--border-dark);
-            color: var(--light-text-color);
-        }
-
-        .collapsible-header:hover {
-            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-        }
-        body.dark-mode .collapsible-header:hover {
-            background: linear-gradient(135deg, #475569 0%, #64748b 100%);
-        }
-
-
-        .collapsible-header .arrow {
-            transition: transform 0.3s ease;
-            font-size: 1.25rem;
-        }
-
-        .collapsible-header.collapsed .arrow {
-            transform: rotate(-90deg);
-        }
-
-        .collapsible-content {
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            max-height: 1000px; /* Large enough to accommodate content */
-            padding: 1.5rem;
-        }
-
-        .collapsible-content.collapsed {
-            max-height: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-
-        .collapsible-content h4 {
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .collapsible-content h4:first-child {
-            margin-top: 0;
-        }
-
-        .collapsible-content code {
-            background-color: #f1f5f9;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.875rem;
-        }
-        /* ORIGINAL DARK MODE CODE BLOCK (BEFORE IMPROVEMENT) */
-        /* body.dark-mode .collapsible-content code {
-            background-color: #334155;
-            color: var(--light-text-color);
-        } */
-
-
-        footer {
-            text-align: center;
-            padding: 2rem 1rem;
-            margin-top: 3rem;
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e293b 100%);
-            color: var(--light-text-color);
-            font-size: 0.875rem;
-        }
-
-        footer a {
-            color: var(--primary-light);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive mejoras */
-        @media (max-width: 640px) {
-            .container {
-                margin: 1rem auto;
-                padding: 0 0.75rem;
-                gap: 1.5rem;
-            }
-            
-            .card-content {
-                padding: 1rem;
-            }
-            
-            .form-group {
-                margin-bottom: 1.25rem;
-            }
-            
-            .input-group {
-                gap: 0.5rem;
-            }
-
-            .btn {
-                margin-top: 1rem; /* Adjust button spacing for smaller screens */
-            }
-        }
-
-        /* Animaciones */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card {
-            animation: slideIn 0.3s ease-out;
-        }
-
-        /* Mejoras de accesibilidad */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        /* --- NEW PONDERABLE SWITCH STYLES --- */
-        /* This version uses CSS Grid for layout and transform/opacity for a fluid animation. */
-        
-        .ponderable-switch {
-            position: relative;
-            display: grid; /* Use Grid for robust layout */
-            grid-template-columns: auto 1fr; /* Column for slider, column for text */
-            align-items: center;
-            gap: 0.75rem; /* Space between slider and text area */
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            min-width: 160px;
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--border-radius);
-            background-color: #e2e8f0;
+        .toolbar button, .toolbar .file-upload {
+            background-color: var(--button-bg);
+            border: 1px solid var(--border-color);
             color: var(--text-color);
-            transition: var(--transition);
-            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
             font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
         }
 
-        .ponderable-switch input {
+        .toolbar button:hover, .toolbar .file-upload:hover {
+            background-color: var(--button-hover-bg);
+        }
+        
+        .toolbar input[type="file"] {
+            display: none;
+        }
+
+        .theme-switch {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-switch .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .theme-switch .switch input {
             opacity: 0;
             width: 0;
             height: 0;
+        }
+
+        .slider {
             position: absolute;
-        }
-
-        .ponderable-slider {
-            grid-column: 1; /* Place slider in the first column */
-            grid-row: 1;
-            position: relative;
-            width: 40px;
-            height: 22px;
-            background-color: var(--secondary-color);
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
             border-radius: 20px;
-            transition: background-color 0.4s;
-            flex-shrink: 0;
         }
 
-        .ponderable-slider:before {
+        .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 2px;
-            bottom: 2px;
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
             background-color: white;
+            transition: .4s;
             border-radius: 50%;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        input:checked ~ .ponderable-slider {
-            background-color: var(--success-color);
+        input:checked + .slider {
+            background-color: #2196F3;
         }
 
-        input:checked ~ .ponderable-slider:before {
-            transform: translateX(18px);
+        input:checked + .slider:before {
+            transform: translateX(20px);
         }
 
-        .ponderable-switch.off {
-            background-color: var(--border-color);
-            color: var(--text-secondary);
-        }
-        body.dark-mode .ponderable-switch.off {
-            background-color: #334155;
-            color: #94a3b8;
+        .tabs {
+            display: flex;
+            background-color: var(--editor-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.25rem 0.5rem 0;
         }
 
-        .ponderable-switch.on {
-            background-color: var(--primary-light);
-            color: white;
-        }
-        body.dark-mode .ponderable-switch.on {
-            background-color: var(--primary-dark);
-            color: white;
-        }
-
-        /* Text animation styling */
-        .ponderable-switch .text-off,
-        .ponderable-switch .text-on {
-            grid-column: 2; /* Place both texts in the second column */
-            grid-row: 1;    /* Place both texts in the same row (they will overlap) */
-            transition: opacity 0.25s ease-out, transform 0.25s ease-out;
-            transform-origin: left center; /* Animate from the left */
-            white-space: nowrap;
-            text-align: left;
+        .tab {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background-color: var(--tab-bg);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            cursor: pointer;
+            border-radius: 0.25rem 0.25rem 0 0;
+            margin-right: 0.25rem;
+            position: relative;
+            bottom: -1px;
         }
 
-        .ponderable-switch .text-on {
-            transform: scaleX(0);
-            opacity: 0;
+        .tab.active {
+            background-color: var(--tab-active-bg);
+            border-bottom: 1px solid var(--tab-active-bg);
         }
 
-        .ponderable-switch input:checked ~ .text-off {
-            transform: scaleX(0);
-            opacity: 0;
-        }
-        .ponderable-switch input:checked ~ .text-on {
-            transform: scaleX(1);
-            opacity: 1;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 640px) {
-            .input-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .ponderable-switch {
-                margin-left: 0;
-                width: 100%;
-            }
-            .ponderacion-select {
-                margin-left: 0;
-            }
+        .tab-name {
+            margin-right: 0.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text-color);
         }
         
-        @media (min-width: 641px) {
-            .ponderable-switch {
-                margin-left: 0.75rem;
-            }
-            .ponderacion-select {
-                margin-left: 0.5rem;
-            }
+        .tab-name:focus {
+            outline: 1px solid var(--border-color);
         }
+
+        .close-tab {
+            background: transparent;
+            border: none;
+            color: var(--tab-close-color);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .close-tab:hover {
+            background-color: var(--tab-close-hover-bg);
+            border-radius: 50%;
+        }
+
+        .split-container {
+            display: flex;
+            flex-grow: 1;
+            height: calc(100% - 80px); /* Adjust based on toolbar and tabs height */
+        }
+
+        #editor-pane, #preview-pane {
+            height: 100%;
+            overflow: auto;
+        }
+
+        #preview-pane iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: var(--preview-bg);
+        }
+
+        .gutter {
+            background-color: var(--border-color);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            cursor: col-resize;
+        }
+
+        .gutter.gutter-horizontal {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxl79uzZfxmbNm3aMHzZ5FfCd4TLAgB1JA2r3s/i1QAAAABJRU5ErkJggg==');
+        }
+
+        /* CodeMirror styles */
+        .CodeMirror {
+            height: 100% !important;
+            font-size: 1rem;
+            background: var(--editor-bg);
+            color: var(--text-color);
+        }
+        .cm-s-default .cm-comment { color: #a52a2a; }
+        .cm-s-default .cm-atom { color: #219; }
+        .cm-s-default .cm-number { color: #164; }
+        .cm-s-default .cm-property, .cm-s-default .cm-attribute { color: #00c; }
+        .cm-s-default .cm-keyword { color: #708; }
+        .cm-s-default .cm-string { color: #a11; }
+        .cm-s-default .cm-variable { color: #085; }
+        .cm-s-default .cm-tag { color: #170; }
+        .cm-s-default .cm-bracket { color: #997; }
+
+        .cm-s-darcula { background: #2B2B2B; color: #A9B7C6; }
+        .cm-s-darcula .cm-keyword { color: #CC7832; }
+        .cm-s-darcula .cm-atom { color: #CC7832; }
+        .cm-s-darcula .cm-number { color: #6897BB; }
+        .cm-s-darcula .cm-def { color: #FFC66D; }
+        .cm-s-darcula .cm-variable { color: #A9B7C6; }
+        .cm-s-darcula .cm-property { color: #9876AA; }
+        .cm-s-darcula .cm-operator { color: #A9B7C6; }
+        .cm-s-darcula .cm-comment { color: #808080; }
+        .cm-s-darcula .cm-string { color: #6A8759; }
+        .cm-s-darcula .cm-string-2 { color: #6A8759; }
+        .cm-s-darcula .cm-meta { color: #BBB529; }
+        .cm-s-darcula .cm-error { background: #410E0E; color: #A9B7C6; }
+        .cm-s-darcula .cm-qualifier { color: #6A8759; }
+        .cm-s-darcula .cm-builtin { color: #A9B7C6; }
+        .cm-s-darcula .cm-bracket { color: #A9B7C6; }
+        .cm-s-darcula .cm-tag { color: #E8BF6A; }
+        .cm-s-darcula .cm-attribute { color: #9876AA; }
+        .cm-s-darcula .cm-header { color: #808080; }
+        .cm-s-darcula .cm-link { color: #CC7832; }
+        .cm-s-darcula .cm-special { color: #A9B7C6; }
+        .cm-s-darcula .cm-variable-2 { color: #A9B7C6; }
+        .cm-s-darcula .cm-variable-3, .cm-s-darcula .cm-type { color: #A9B7C6; }
+        .cm-s-darcula .cm-url { color: #287BDE; }
+        .cm-s-darcula .cm-searching { background: #323232; }
+        .cm-s-darcula .CodeMirror-cursor { border-left: 1px solid #A9B7C6 !important; }
+        .cm-s-darcula div.CodeMirror-selected { background: #214283; }
+        .cm-s-darcula .CodeMirror-gutters { background: #313335; border-right: 1px solid #313335; }
+        .cm-s-darcula .CodeMirror-guttermarker { color: #A9B7C6; }
+        .cm-s-darcula .CodeMirror-guttermarker-subtle { color: #808080; }
+        .cm-s-darcula .CodeMirror-linenumber { color: #606366; }
+        .cm-s-darcula .CodeMirror-activeline-background { background: #323232; }
+
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/darcula.min.css">
 </head>
 <body>
-    <header>
-        <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Alternar modo oscuro">🌙</button>
-        <h1>Calculadora de Nota de Acceso a la Universidad</h1>
-        <p>PAU / EBAU / EvAU (España)</p>
-    </header>
 
-    <main class="container">
-        <section class="calculator-container">
-            <div class="card">
-                <div class="card-header">📚 Fase Obligatoria (General)</div>
-                <div class="card-content">
-                    <form id="pauCalculatorForm">
-                        <div class="message info">
-                            <p><strong>💡 Instrucciones:</strong> Introduce tus notas de 0 a 10 con hasta 3 decimales. Si quieres que una materia también cuente para la nota de admisión, activa "Ponderable" y selecciona su coeficiente.</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="bachilleratoNota">
-                                🎓 Nota Media de Bachillerato (0-10)
-                            </label>
-                            <input type="number" id="bachilleratoNota" step="0.001" min="0" max="10" placeholder="Ej: 8.250" required>
-                            <div class="examples">Tu nota media del expediente de Bachillerato</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="lenguaNota">
-                                📝 Lengua Castellana y Literatura II
-                            </label>
-                            <div class="input-group">
-                                <input type="number" id="lenguaNota" step="0.001" min="0" max="10" placeholder="Ej: 7.500" required>
-                                <label class="ponderable-switch" data-materia-id="lenguaNota">
-                                    <input type="checkbox" id="lengua-check">
-                                    <span class="ponderable-slider"></span>
-                                    <span class="text-off">No Pondera</span>
-                                    <span class="text-on">Pondera</span>
-                                </label>
-                                <select class="ponderacion-select" disabled>
-                                    <option value="0.1">0.1</option>
-                                    <option value="0.15">0.15</option>
-                                    <option value="0.2" selected>0.2</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="historiaFiloNota">
-                                🏛️ Historia de España o Historia de la Filosofía
-                            </label>
-                            <div class="input-group">
-                                <input type="number" id="historiaFiloNota" step="0.001" min="0" max="10" placeholder="Ej: 6.800" required>
-                                <label class="ponderable-switch" data-materia-id="historiaFiloNota">
-                                    <input type="checkbox" id="historia-check">
-                                    <span class="ponderable-slider"></span>
-                                    <span class="text-off">No Pondera</span>
-                                    <span class="text-on">Pondera</span>
-                                </label>
-                                <select class="ponderacion-select" disabled>
-                                    <option value="0.1">0.1</option>
-                                    <option value="0.15">0.15</option>
-                                    <option value="0.2" selected>0.2</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="extranjeraNota">
-                                🌍 Lengua Extranjera (Inglés/Francés/etc.)
-                            </label>
-                            <div class="input-group">
-                                <input type="number" id="extranjeraNota" step="0.001" min="0" max="10" placeholder="Ej: 9.000" required>
-                                <label class="ponderable-switch" data-materia-id="extranjeraNota">
-                                    <input type="checkbox" id="extranjera-check">
-                                    <span class="ponderable-slider"></span>
-                                    <span class="text-off">No Pondera</span>
-                                    <span class="text-on">Pondera</span>
-                                </label>
-                                <select class="ponderacion-select" disabled>
-                                    <option value="0.1">0.1</option>
-                                    <option value="0.15">0.15</option>
-                                    <option value="0.2" selected>0.2</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="modalidadNota">
-                                🔬 Materia Troncal de Modalidad
-                            </label>
-                            <div class="input-group">
-                                <input type="number" id="modalidadNota" step="0.001" min="0" max="10" placeholder="Ej: 8.750" required>
-                                <label class="ponderable-switch" data-materia-id="modalidadNota">
-                                    <input type="checkbox" id="modalidad-check">
-                                    <span class="ponderable-slider"></span>
-                                    <span class="text-off">No Pondera</span>
-                                    <span class="text-on">Pondera</span>
-                                </label>
-                                <select class="ponderacion-select" disabled>
-                                    <option value="0.1">0.1</option>
-                                    <option value="0.15">0.15</option>
-                                    <option value="0.2" selected>0.2</option>
-                                </select>
-                            </div>
-                            <div class="examples">
-                                Ej: Matemáticas II, Física, Química, Biología, Dibujo Técnico II, Economía de la Empresa, Historia del Arte, Latín II, Griego II...
-                            </div>
-                        </div>
-
-                        <hr class="section-divider">
-
-                        <div class="card-header" style="margin: 0 -1.5rem 1.5rem -1.5rem; padding: 1.25rem 1.5rem;">
-                            🎯 Fase Voluntaria (Admisión)
-                        </div>
-
-                        <div class="message info">
-                            <p><strong>✨ Materias adicionales:</strong> Introduce hasta 4 notas de materias voluntarias para subir tu nota de admisión. Solo cuentan las notas ≥ 5.0.</p>
-                        </div>
-
-                        <div class="additional-materias-group">
-                            <div class="form-group">
-                                <label for="adicional1Nota">➕ Materia Adicional 1</label>
-                                <div class="input-group">
-                                    <input type="number" id="adicional1Nota" step="0.001" min="0" max="10" placeholder="Ej: 7.000 (opcional)">
-                                    <select class="ponderacion-select" id="adicional1Ponderacion">
-                                        <option value="0.1">0.1</option>
-                                        <option value="0.15">0.15</option>
-                                        <option value="0.2" selected>0.2</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="adicional2Nota">➕ Materia Adicional 2</label>
-                                <div class="input-group">
-                                    <input type="number" id="adicional2Nota" step="0.001" min="0" max="10" placeholder="Ej: 8.500 (opcional)">
-                                    <select class="ponderacion-select" id="adicional2Ponderacion">
-                                        <option value="0.1">0.1</option>
-                                        <option value="0.15">0.15</option>
-                                        <option value="0.2" selected>0.2</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="adicional3Nota">➕ Materia Adicional 3</label>
-                                <div class="input-group">
-                                    <input type="number" id="adicional3Nota" step="0.001" min="0" max="10" placeholder="Ej: 6.200 (opcional)">
-                                    <select class="ponderacion-select" id="adicional3Ponderacion">
-                                        <option value="0.1">0.1</option>
-                                        <option value="0.15">0.15</option>
-                                        <option value="0.2" selected>0.2</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="adicional4Nota">➕ Materia Adicional 4</label>
-                                <div class="input-group">
-                                    <input type="number" id="adicional4Nota" step="0.001" min="0" max="10" placeholder="Ej: 9.100 (opcional)">
-                                    <select class="ponderacion-select" id="adicional4Ponderacion">
-                                        <option value="0.1">0.1</option>
-                                        <option value="0.15">0.15</option>
-                                        <option value="0.2" selected>0.2</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn" id="calculateBtn">🧮 Calcular Nota</button>
-                        <button type="button" class="btn btn-secondary" id="resetBtn">🗑️ Limpiar Campos</button>
-                    </form>
-                </div>
+    <div class="container">
+        <div class="toolbar">
+            <button id="paste-btn">Paste</button>
+            <button id="clear-btn">Clear</button>
+            <label class="file-upload">
+                <input type="file" id="upload-btn" accept=".html,.htm">
+                Upload
+            </label>
+            <button id="download-btn">Download</button>
+            <div class="theme-switch">
+                <span>Dark Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
             </div>
-        </section>
+        </div>
 
-        <section class="results-container">
-            <div class="card" id="resultsCard">
-                <div class="card-header">📊 Tus Resultados</div>
-                <div class="card-content">
-                    <div class="results">
-                        <div class="result-item">
-                            <span><strong>Nota Media PAU:</strong></span>
-                            <div class="result-value"><span id="notaMediaPauResult">N/A</span></div>
-                        </div>
-                        <div class="result-item">
-                            <span><strong>Nota de Acceso:</strong></span>
-                            <div class="result-value"><span id="notaAccesoResult">N/A</span></div>
-                        </div>
-                        
-                        <div class="message warning" id="pauMin4Warning" style="display: none;">
-                            ⚠️ La nota media de la Fase Obligatoria debe ser de al menos 4.0 para calcular tu Nota de Acceso.
-                        </div>
-                        <div class="message warning" id="accesoMin5Warning" style="display: none;">
-                            ⚠️ Tu Nota de Acceso debe ser de al menos 5.0 para acceder a la universidad.
-                        </div>
+        <div class="tabs" id="tabs-container">
+            <button id="new-tab-btn" style="padding: 0.2rem 0.5rem; font-size: 1.2rem; margin-right: 0.5rem;">+</button>
+        </div>
 
-                        <hr class="section-divider">
-                        
-                        <h4 style="text-align: center; color: var(--primary-color); margin: 1rem 0;">🎯 Nota de Admisión (0 - 14)</h4>
-                        
-                        <div class="result-item">
-                            <span>Ponderación Materia 1:</span>
-                            <div class="result-value"><span id="ponderacion1Result">N/A</span></div>
-                        </div>
-                        <div class="result-item">
-                            <span>Ponderación Materia 2:</span>
-                            <div class="result-value"><span id="ponderacion2Result">N/A</span></div>
-                        </div>
-                        <div class="result-item" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-left-color: var(--info-color);">
-                            <span><strong>Nota de Admisión Final:</strong></span>
-                            <div class="result-value note-excellent"><span id="notaAdmisionResult">N/A</span></div>
-                        </div>
-                    </div>
-                </div>
+        <div class="split-container">
+            <div id="editor-pane">
+                <textarea id="editor"></textarea>
             </div>
-        </section>
-
-        <section class="info-container">
-            <div class="card">
-                <div class="collapsible-header" id="infoCalculoHeader">
-                    <h3>ℹ️ ¿Cómo se calcula la Nota de Acceso a la Universidad?</h3>
-                    <span class="arrow">▼</span>
-                </div>
-                <div class="collapsible-content" id="infoCalculoContent">
-                    <h4>Fase Obligatoria (Nota de Acceso) - Máximo 10 puntos</h4>
-                    <p>La Nota de Acceso (antes, Nota de Selectividad o Nota PAU) se calcula con la siguiente fórmula:</p>
-                    <p><code>0.4 * Nota Fase Obligatoria + 0.6 * Nota Media Bachillerato</code></p>
-                    <ul>
-                        <li>La Nota Media de Bachillerato es la nota media de tu expediente académico de 1º y 2º de Bachillerato (sobre 10).</li>
-                        <li>La Nota de la Fase Obligatoria es la media aritmética de las cuatro materias troncales que te examinas (Lengua Castellana y Literatura, Historia de España/Filosofía, Lengua Extranjera, y la materia troncal de modalidad).</li>
-                        <li>Para que esta nota sea válida, la Nota de la Fase Obligatoria debe ser igual o superior a 4.0 puntos.</li>
-                        <li>Además, la Nota de Acceso resultante debe ser igual o superior a 5.0 puntos.</li>
-                    </ul>
-
-                    <h4>Fase Voluntaria (Nota de Admisión) - Máximo 14 puntos</h4>
-                    <p>Para optar a una nota superior a 10 puntos, se utiliza la Nota de Admisión, que se calcula sumando a la Nota de Acceso las dos mejores calificaciones obtenidas en la Fase Voluntaria o en la Fase Obligatoria, siempre que estén relacionadas con el Grado Universitario y superen el 5.0. La fórmula es:</p>
-                    <p><code>Nota de Acceso + a * M1 + b * M2</code></p>
-                    <ul>
-                        <li><code>Nota de Acceso</code>: La nota calculada en la Fase Obligatoria (máximo 10).</li>
-                        <li><code>M1</code> y <code>M2</code>: Las notas de las dos materias con mejor ponderación para el grado al que aspiras, siempre que sean iguales o superiores a 5.0. Estas materias pueden ser de la Fase Obligatoria (si se ponderan) o de la Fase Voluntaria.</li>
-                        <li><code>a</code> y <code>b</code>: Son los parámetros de ponderación (0.1, 0.15 o 0.2) establecidos por cada universidad para cada materia y grado. Aquí, puedes seleccionar el valor de ponderación para cada una de tus materias.</li>
-                    </ul>
-                    <p>Es importante revisar las tablas de ponderación de cada universidad, ya que pueden variar significativamente.</p>
-                </div>
+            <div id="preview-pane">
+                <iframe id="preview"></iframe>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
-    <footer>
-        <p>&copy; 2025 Calculadora PAU/EBAU/EvAU. Todos los derechos reservados. | <a href="#" target="_blank" rel="noopener noreferrer">Política de Privacidad</a></p>
-    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('pauCalculatorForm');
-            const bachilleratoNotaInput = document.getElementById('bachilleratoNota');
-            const lenguaNotaInput = document.getElementById('lenguaNota');
-            const historiaFiloNotaInput = document.getElementById('historiaFiloNota');
-            const extranjeraNotaInput = document.getElementById('extranjeraNota');
-            const modalidadNotaInput = document.getElementById('modalidadNota');
+            let editor;
+            const tabsContainer = document.getElementById('tabs-container');
+            const newTabBtn = document.getElementById('new-tab-btn');
+            const pasteBtn = document.getElementById('paste-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const uploadBtn = document.getElementById('upload-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const themeToggle = document.getElementById('theme-toggle');
+            const previewFrame = document.getElementById('preview');
 
-            const ponderableToggles = document.querySelectorAll('.ponderable-switch');
-            const ponderacionSelects = document.querySelectorAll('.ponderacion-select');
+            let tabs = [];
+            let activeTabId = null;
+            let untitledCounter = 1;
 
-            const adicional1NotaInput = document.getElementById('adicional1Nota');
-            const adicional2NotaInput = document.getElementById('adicional2Nota');
-            const adicional3NotaInput = document.getElementById('adicional3Nota');
-            const adicional4NotaInput = document.getElementById('adicional4Nota');
-
-            const adicional1PonderacionSelect = document.getElementById('adicional1Ponderacion');
-            const adicional2PonderacionSelect = document.getElementById('adicional2Ponderacion');
-            const adicional3PonderacionSelect = document.getElementById('adicional3Ponderacion');
-            const adicional4PonderacionSelect = document.getElementById('adicional4Ponderacion');
-
-            const notaMediaPauResult = document.getElementById('notaMediaPauResult');
-            const notaAccesoResult = document.getElementById('notaAccesoResult');
-            const ponderacion1Result = document.getElementById('ponderacion1Result');
-            const ponderacion2Result = document.getElementById('ponderacion2Result');
-            const notaAdmisionResult = document.getElementById('notaAdmisionResult');
-
-            const pauMin4Warning = document.getElementById('pauMin4Warning');
-            const accesoMin5Warning = document.getElementById('accesoMin5Warning');
-            const resultsCard = document.getElementById('resultsCard');
-            const resetBtn = document.getElementById('resetBtn');
-
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const infoCalculoHeader = document.getElementById('infoCalculoHeader');
-            const infoCalculoContent = document.getElementById('infoCalculoContent');
-
-            // Dark mode functionality
-            const enableDarkMode = () => {
-                document.body.classList.add('dark-mode');
-                darkModeToggle.textContent = '☀️';
-                localStorage.setItem('darkMode', 'enabled');
-            };
-
-            const disableDarkMode = () => {
-                document.body.classList.remove('dark-mode');
-                darkModeToggle.textContent = '🌙';
-                localStorage.setItem('darkMode', 'disabled');
-            };
-
-            if (localStorage.getItem('darkMode') === 'enabled') {
-                enableDarkMode();
+            function updatePreview() {
+                if (!activeTabId) return;
+                const activeTab = tabs.find(tab => tab.id === activeTabId);
+                if (activeTab) {
+                    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                    previewDoc.open();
+                    previewDoc.write(activeTab.content);
+                    previewDoc.close();
+                }
             }
-
-            darkModeToggle.addEventListener('click', () => {
-                if (document.body.classList.contains('dark-mode')) {
-                    disableDarkMode();
-                } else {
-                    enableDarkMode();
-                }
+            
+            editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                lineNumbers: true,
+                mode: 'htmlmixed',
+                theme: 'default',
+                autoCloseTags: true,
             });
 
-            // Collapsible Info Section
-            infoCalculoHeader.addEventListener('click', () => {
-                infoCalculoContent.classList.toggle('collapsed');
-                infoCalculoHeader.classList.toggle('collapsed');
-            });
-            // Initially collapse the content
-            infoCalculoContent.classList.add('collapsed');
-            infoCalculoHeader.classList.add('collapsed');
-
-
-            // Initialize ponderable toggles and select states
-            ponderableToggles.forEach(toggle => {
-                const checkbox = toggle.querySelector('input[type="checkbox"]');
-                const inputGroup = toggle.closest('.input-group');
-                const select = inputGroup ? inputGroup.querySelector('.ponderacion-select') : null;
-
-
-                if (select) { // Ensure select exists
-                    // Set initial state based on checkbox
-                    if (checkbox.checked) {
-                        select.disabled = false;
-                        toggle.classList.add('on');
-                        toggle.classList.remove('off');
-                    } else {
-                        select.disabled = true;
-                        toggle.classList.add('off');
-                        toggle.classList.remove('on');
+            editor.on('change', () => {
+                if (activeTabId) {
+                    const tab = tabs.find(t => t.id === activeTabId);
+                    if (tab) {
+                        tab.content = editor.getValue();
+                        updatePreview();
                     }
-
-                    checkbox.addEventListener('change', () => {
-                        if (checkbox.checked) {
-                            select.disabled = false;
-                            toggle.classList.add('on');
-                            toggle.classList.remove('off');
-                        } else {
-                            select.disabled = true;
-                            toggle.classList.add('off');
-                            toggle.classList.remove('on');
-                        }
-                    });
                 }
             });
 
-
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                calculateNotes();
-            });
-
-            resetBtn.addEventListener('click', () => {
-                form.reset();
-                // Reset ponderable toggles and selects
-                ponderableToggles.forEach(toggle => {
-                    const checkbox = toggle.querySelector('input[type="checkbox"]');
-                    const inputGroup = toggle.closest('.input-group');
-                    const select = inputGroup ? inputGroup.querySelector('.ponderacion-select') : null;
+            function renderTabs() {
+                tabsContainer.innerHTML = '';
+                tabsContainer.appendChild(newTabBtn);
+                tabs.forEach(tab => {
+                    const tabEl = document.createElement('div');
+                    tabEl.className = 'tab' + (tab.id === activeTabId ? ' active' : '');
+                    tabEl.dataset.tabId = tab.id;
                     
-                    if (select) {
-                        checkbox.checked = false;
-                        select.disabled = true;
-                        select.value = "0.2"; // Reset to default ponderation
-                        toggle.classList.remove('on'); // Reset visual state
-                        toggle.classList.add('off');
-                    }
+                    const tabName = document.createElement('input');
+                    tabName.type = 'text';
+                    tabName.className = 'tab-name';
+                    tabName.value = tab.name;
+                    tabName.addEventListener('change', (e) => {
+                        tab.name = e.target.value;
+                    });
+                    tabName.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+
+
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'close-tab';
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        closeTab(tab.id);
+                    });
+
+                    tabEl.appendChild(tabName);
+                    tabEl.appendChild(closeBtn);
+                    tabEl.addEventListener('click', () => switchTab(tab.id));
+                    tabsContainer.insertBefore(tabEl, newTabBtn);
                 });
+            }
 
-                // Reset additional ponderation selects to default
-                adicional1PonderacionSelect.value = "0.2";
-                adicional2PonderacionSelect.value = "0.2";
-                adicional3PonderacionSelect.value = "0.2";
-                adicional4PonderacionSelect.value = "0.2";
+            function createNewTab(name = `untitled${untitledCounter++}.html`, content = '<!DOCTYPE html>\n<html>\n<head>\n  <title>New Page</title>\n</head>\n<body>\n\n</body>\n</html>') {
+                const newTab = {
+                    id: Date.now(),
+                    name: name,
+                    content: content
+                };
+                tabs.push(newTab);
+                switchTab(newTab.id);
+            }
 
-                // Clear results
-                notaMediaPauResult.textContent = 'N/A';
-                notaAccesoResult.textContent = 'N/A';
-                ponderacion1Result.textContent = 'N/A';
-                ponderacion2Result.textContent = 'N/A';
-                notaAdmisionResult.textContent = 'N/A';
-                notaAdmisionResult.parentElement.className = 'result-value'; // Reset color
+            function switchTab(tabId) {
+                if(activeTabId === tabId) return;
+                
+                activeTabId = tabId;
+                const tab = tabs.find(t => t.id === tabId);
+                if (tab) {
+                    editor.setValue(tab.content);
+                    updatePreview();
+                }
+                renderTabs();
+            }
 
-                // Hide warnings
-                pauMin4Warning.style.display = 'none';
-                accesoMin5Warning.style.display = 'none';
+            function closeTab(tabId) {
+                const index = tabs.findIndex(t => t.id === tabId);
+                if (index > -1) {
+                    tabs.splice(index, 1);
+                    if (activeTabId === tabId) {
+                        if (tabs.length > 0) {
+                            const newActiveIndex = Math.max(0, index - 1);
+                            switchTab(tabs[newActiveIndex].id);
+                        } else {
+                            activeTabId = null;
+                            editor.setValue('');
+                            updatePreview();
+                        }
+                    }
+                    renderTabs();
+                    if(tabs.length === 0){
+                        createNewTab();
+                    }
+                }
+            }
 
-                resultsCard.scrollIntoView({ behavior: 'smooth' });
+            newTabBtn.addEventListener('click', () => createNewTab());
+
+            pasteBtn.addEventListener('click', () => {
+                navigator.clipboard.readText().then(text => {
+                    editor.replaceSelection(text);
+                }).catch(err => {
+                    alert('Failed to paste from clipboard.');
+                });
             });
 
-            function getInputValue(id) {
-                const input = document.getElementById(id);
-                const value = parseFloat(input.value);
-                return isNaN(value) ? 0 : value;
-            }
+            clearBtn.addEventListener('click', () => {
+                editor.setValue('');
+            });
 
-            function getCheckboxValue(id) {
-                return document.getElementById(id).checked;
-            }
-
-            function getSelectValue(selectElement) {
-                return parseFloat(selectElement.value);
-            }
-
-            function formatNote(note) {
-                return note.toFixed(3).replace('.', ',');
-            }
-
-            function updateResultDisplay(element, note) {
-                element.textContent = formatNote(note);
-                const parentDiv = element.parentElement;
-                parentDiv.classList.remove('note-fail', 'note-pass', 'note-intermediate', 'note-excellent');
-
-                if (note < 5) {
-                    parentDiv.classList.add('note-fail');
-                } else if (note >= 5 && note < 7) {
-                    parentDiv.classList.add('note-pass');
-                } else if (note >= 7 && note < 9) {
-                    parentDiv.classList.add('note-intermediate');
-                } else { // note >= 9
-                    parentDiv.classList.add('note-excellent');
+            uploadBtn.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const content = e.target.result;
+                        createNewTab(file.name, content);
+                    };
+                    reader.readAsText(file);
                 }
-            }
+            });
 
-            function calculateNotes() {
-                const bachilleratoNota = getInputValue('bachilleratoNota');
-                const lenguaNota = getInputValue('lenguaNota');
-                const historiaFiloNota = getInputValue('historiaFiloNota');
-                const extranjeraNota = getInputValue('extranjeraNota');
-                const modalidadNota = getInputValue('modalidadNota');
+            downloadBtn.addEventListener('click', () => {
+                const activeTab = tabs.find(tab => tab.id === activeTabId);
+                if (activeTab) {
+                    const blob = new Blob([activeTab.content], { type: 'text/html' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = activeTab.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            });
 
-                // Calculate Nota Media PAU (Fase Obligatoria)
-                const mediaPau = (lenguaNota + historiaFiloNota + extranjeraNota + modalidadNota) / 4;
-                updateResultDisplay(notaMediaPauResult, mediaPau);
-
-                // Calculate Nota de Acceso
-                let notaAcceso = 0;
-                let isPauMin4 = mediaPau >= 4.0;
-                pauMin4Warning.style.display = isPauMin4 ? 'none' : 'block';
-
-                if (isPauMin4) {
-                    notaAcceso = (0.6 * bachilleratoNota) + (0.4 * mediaPau);
-                    updateResultDisplay(notaAccesoResult, notaAcceso);
+            themeToggle.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    editor.setOption('theme', 'darcula');
                 } else {
-                    notaAccesoResult.textContent = 'N/A';
-                    notaAccesoResult.parentElement.className = 'result-value'; // Reset color
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    editor.setOption('theme', 'default');
                 }
-                
-                let isAccesoMin5 = notaAcceso >= 5.0;
-                accesoMin5Warning.style.display = isAccesoMin5 ? 'none' : 'block';
+            });
 
-                // Calculate Nota de Admisión
-                let notasAdmision = [];
+            Split(['#editor-pane', '#preview-pane'], {
+                sizes: [50, 50],
+                minSize: 200,
+                gutterSize: 8,
+                cursor: 'col-resize',
+            });
 
-                // Helper to get ponderation select for a given materia ID
-                function getPonderacionSelectForMateria(materiaId) {
-                    const label = document.querySelector(`.ponderable-switch[data-materia-id="${materiaId}"]`);
-                    const inputGroup = label ? label.closest('.input-group') : null;
-                    return inputGroup ? inputGroup.querySelector('.ponderacion-select') : null;
-                }
-
-                // Check ponderable notes from Fase Obligatoria
-                if (getCheckboxValue('lengua-check') && lenguaNota >= 5.0) {
-                    const select = getPonderacionSelectForMateria('lenguaNota');
-                    if (select) {
-                        notasAdmision.push({
-                            nota: lenguaNota,
-                            ponderacion: getSelectValue(select)
-                        });
-                    }
-                }
-                if (getCheckboxValue('historia-check') && historiaFiloNota >= 5.0) {
-                    const select = getPonderacionSelectForMateria('historiaFiloNota');
-                    if (select) {
-                        notasAdmision.push({
-                            nota: historiaFiloNota,
-                            ponderacion: getSelectValue(select)
-                        });
-                    }
-                }
-                if (getCheckboxValue('extranjera-check') && extranjeraNota >= 5.0) {
-                    const select = getPonderacionSelectForMateria('extranjeraNota');
-                    if (select) {
-                        notasAdmision.push({
-                            nota: extranjeraNota,
-                            ponderacion: getSelectValue(select)
-                        });
-                    }
-                }
-                if (getCheckboxValue('modalidad-check') && modalidadNota >= 5.0) {
-                    const select = getPonderacionSelectForMateria('modalidadNota');
-                    if (select) {
-                        notasAdmision.push({
-                            nota: modalidadNota,
-                            ponderacion: getSelectValue(select)
-                        });
-                    }
-                }
-
-                // Check additional voluntary notes
-                const adicional1Nota = getInputValue('adicional1Nota');
-                if (adicional1Nota >= 5.0) {
-                    notasAdmision.push({
-                        nota: adicional1Nota,
-                        ponderacion: getSelectValue(adicional1PonderacionSelect)
-                    });
-                }
-                const adicional2Nota = getInputValue('adicional2Nota');
-                if (adicional2Nota >= 5.0) {
-                    notasAdmision.push({
-                        nota: adicional2Nota,
-                        ponderacion: getSelectValue(adicional2PonderacionSelect)
-                    });
-                }
-                const adicional3Nota = getInputValue('adicional3Nota');
-                if (adicional3Nota >= 5.0) {
-                    notasAdmision.push({
-                        nota: adicional3Nota,
-                        ponderacion: getSelectValue(adicional3PonderacionSelect)
-                    });
-                }
-                const adicional4Nota = getInputValue('adicional4Nota');
-                if (adicional4Nota >= 5.0) {
-                    notasAdmision.push({
-                        nota: adicional4Nota,
-                        ponderacion: getSelectValue(adicional4PonderacionSelect)
-                    });
-                }
-
-                // Sort notes by their ponderated value in descending order
-                notasAdmision.sort((a, b) => (b.nota * b.ponderacion) - (a.nota * a.ponderacion));
-
-                let ponderacion1 = 0;
-                let ponderacion2 = 0;
-
-                if (notasAdmision.length > 0) {
-                    ponderacion1 = notasAdmision[0].nota * notasAdmision[0].ponderacion;
-                }
-                if (notasAdmision.length > 1) {
-                    ponderacion2 = notasAdmision[1].nota * notasAdmision[1].ponderacion;
-                }
-
-                // Display ponderations
-                if (notasAdmision.length > 0) {
-                    ponderacion1Result.textContent = formatNote(ponderacion1) + ` (${formatNote(notasAdmision[0].nota)} x ${notasAdmision[0].ponderacion})`;
-                } else {
-                    ponderacion1Result.textContent = 'N/A';
-                }
-                if (notasAdmision.length > 1) {
-                    ponderacion2Result.textContent = formatNote(ponderacion2) + ` (${formatNote(notasAdmision[1].nota)} x ${notasAdmision[1].ponderacion})`;
-                } else {
-                    ponderacion2Result.textContent = 'N/A';
-                }
-
-                let notaAdmisionFinal = notaAcceso + ponderacion1 + ponderacion2;
-                if (notaAdmisionFinal > 14) notaAdmisionFinal = 14; // Cap at 14
-
-                if (isPauMin4 && isAccesoMin5) {
-                    updateResultDisplay(notaAdmisionResult, notaAdmisionFinal);
-                } else {
-                    notaAdmisionResult.textContent = 'N/A';
-                    notaAdmisionResult.parentElement.className = 'result-value'; // Reset color
-                }
-                resultsCard.scrollIntoView({ behavior: 'smooth' });
-            }
+            // Initial tab
+            createNewTab();
         });
     </script>
 </body>
